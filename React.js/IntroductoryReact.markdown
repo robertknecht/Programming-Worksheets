@@ -383,11 +383,12 @@ Note that you *cannot* call `this.setState` inside a `render` function! That wou
 2. reruns `render` to display the changes.
 
 **Exercise 5**: Create a component whose background color changes when the mouse moves over it, and changes back when the mouse leaves.
+
 **Extra Credit**: Create a component that experiences three different changes in appearance when you click on it.
 
 ## Form Fields and State: Controlled and Uncontrolled
 
-Form fields (such as text input boxes) have an interesting property: if you set their `value` attribute inside a `render` function, that value **completely** controls the value of the text box—even when the user types inside of it! This is called a 'controlled' input element. This is actually very desirable in many applications—such as, for instance, only allowing certain characters to be typed in an input field. (If you don't directly set the `value` attribute, you get an 'uncontrolled' component, which is also useful.)
+Form fields (such as text input boxes) have an interesting property: if you set their `value` attribute inside a `render` function, that value **completely** controls the value of the text box—even when the user types inside of it! This is called a 'controlled' input element. This is actually very desirable in many applications—such as, for instance, only allowing certain characters to be typed in an input field. (If you don't directly set the `value` attribute, you get an 'uncontrolled' component, which can also be useful.)
 
 The end result is that you need to use `this.setState` to keep the value of the text box updated while the user types, like this:
 
@@ -400,7 +401,7 @@ var InputBox = React.createClass({
   },
   updateText: function(evt) {
     this.setState({
-      text: evt.currentTarget.value
+      text: evt.currentTarget.value // Controlling value of text in input box
     });
   },
   render: function() {
@@ -413,6 +414,8 @@ React.render(
   document.body
 );
 ```
+
+Look at the `updateText` function. We're passing `evt` as an argument. (We could call it anything.) Down in our `render` function, we're calling `updateText` with `onChange`. A keystroke will be passed into the `updateText` function as the `evt` argument. The function updates our `text` state with `evt.currentTarge.value`, which is standard JavaScript syntax to update elements in the Document Object Model. It updates `text` with the new keystrokes the user inputs. 
 
 **Exercise 6**: Create an uncontrolled input box.
 
@@ -427,7 +430,7 @@ Since the state of one component might end up being useful in another component,
 ```JavaScript
 var Paragraphs = React.createClass({
   render: function() {
-    var paragraphs = this.props.text.map(function(paragraph, index) {
+    var paragraphs = this.props.text.map(function(paragraph, index) { // Access paragraphs array [text] in our `Paragraphs` component using `props`.
       return <p key={index}>
         {paragraph}
       </p>;
@@ -438,14 +441,14 @@ var Paragraphs = React.createClass({
   }
 });
 
-var paragraphs = ['one', 'two', 'three'];
+var paragraphs = ['one', 'two', 'three']; // Create paragraphs array
 React.render(
-  <Paragraphs text={paragraphs} />,
+  <Paragraphs text={paragraphs} />, // Pass paragraphs array as an attribute
   document.body
 );
 ```
 
-Here, we added a attribute to the `<Paragraphs>` JSX tag to pass the paragraph data to the component. Within the `render` method, we can access the data as `this.props.text` (where the label in `this.props.LABEL` corresponds to the attribute name in the JSX tag). You can have as many `props` as needed in a component, and [you can validate that a component has the `props` you expect](https://facebook.github.io/react/docs/reusable-components.html).
+Here, in our `React.render`, we added an attribute to the `<Paragraphs>` JSX tag to pass the paragraph data to the component. Within the `render` method (up where we're creating the `Paragraphs` component), we can access the data as `this.props.text` (where the label in `this.props.LABEL` corresponds to the attribute name in the JSX tag). You can have as many `props` as needed in a component, and [you can validate that a component has the `props` you expect](https://facebook.github.io/react/docs/reusable-components.html).
 
 Note what this allows you to do: you can now create components that consume state from other components. For instance, here's an example that will add a new paragraph on each click.
 
@@ -475,7 +478,7 @@ var App = React.createClass({
     paragraphs.push(paragraphs.length + 1); // changes the paragraphs array in-place
     this.setState({
       paragraphs: paragraphs
-    });
+    }
   },
   render: function() {
     return <div onClick={this.clickHandler}>
@@ -489,6 +492,8 @@ React.render(
   document.body
 );
 ```
+
+In the above example, the `App` component creates the `paragraphs` state and handles changes in the state in response to user clicks. It passes the `paragraphs` on to the `Paragraphs` component as an attribute. In the `Paragraphs` component, the `paragraphs` array is broken down and each number is displayed in it's own paragraph.
 
 It is not uncommon to have a single top-level component contain all the state for an app, and pass pieces of it as necessary to child components that may have state of their own.
 
